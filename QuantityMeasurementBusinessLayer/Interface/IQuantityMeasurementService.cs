@@ -1,10 +1,9 @@
 namespace QuantityMeasurementApp
 {
     /// <summary>
-    /// UC15 application-level service interface using DTOs.
-    /// Built on top of the UC14 domain service.
+    /// Single DTO-based service interface for quantity measurement.
     /// </summary>
-    public interface IQuantityMeasurementDtoService
+    public interface IQuantityMeasurementService
     {
         bool CompareQuantities(QuantityDto firstQuantity, QuantityDto secondQuantity);
 

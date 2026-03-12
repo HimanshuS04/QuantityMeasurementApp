@@ -4,9 +4,9 @@ namespace QuantityMeasurementApp
 {
     public class QuantityMenu
     {
-        private readonly IQuantityMeasurementDtoService quantityMeasurementService;
+        private readonly IQuantityMeasurementService quantityMeasurementService;
 
-        public QuantityMenu(IQuantityMeasurementDtoService quantityMeasurementService)
+        public QuantityMenu(IQuantityMeasurementService quantityMeasurementService)
         {
             this.quantityMeasurementService =
                 quantityMeasurementService ??
