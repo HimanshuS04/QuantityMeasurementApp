@@ -34,7 +34,10 @@ namespace QuantityMeasurementApp
             HasError = true;
             ErrorMessage = errorMessage;
         }
-
+        public QuantityMeasurementEntity()
+        {
+            
+        }
         public override string ToString()
         {
             if (HasError)
