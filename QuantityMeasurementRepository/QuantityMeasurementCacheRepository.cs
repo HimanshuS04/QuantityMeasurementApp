@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace QuantityMeasurementApp
 {
@@ -12,10 +15,51 @@ namespace QuantityMeasurementApp
         public static QuantityMeasurementCacheRepository Instance => lazyInstance.Value;
 
         private readonly List<QuantityMeasurementEntity> entities;
+        private readonly string filePath;
+
+        private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            Converters = { new JsonStringEnumConverter() }
+        };
 
         private QuantityMeasurementCacheRepository()
         {
-            entities = new List<QuantityMeasurementEntity>();
+            // JSON file will live next to the executable (bin/Debug/net10.0)
+            filePath = Path.Combine(AppContext.BaseDirectory, "measurements_cache.json");
+
+            if (File.Exists(filePath))
+            {
+                try
+                {
+                    string json = File.ReadAllText(filePath);
+                    var loaded = JsonSerializer.Deserialize<List<QuantityMeasurementEntity>>(json, JsonOptions);
+                    entities = loaded ?? new List<QuantityMeasurementEntity>();
+                }
+                catch
+                {
+                    // If the file is corrupted or unreadable, start with an empty list
+                    entities = new List<QuantityMeasurementEntity>();
+                }
+            }
+            else
+            {
+                entities = new List<QuantityMeasurementEntity>();
+            }
+        }
+
+        private void PersistToFile()
+        {
+            try
+            {
+                string json = JsonSerializer.Serialize(entities, JsonOptions);
+                File.WriteAllText(filePath, json);
+            }
+            catch
+            {
+                // You can optionally log to console here if you want,
+                // but don't crash the app just because logging persistence failed.
+            }
         }
 
         public void Save(QuantityMeasurementEntity entity)
@@ -23,6 +67,7 @@ namespace QuantityMeasurementApp
             if (entity != null)
             {
                 entities.Add(entity);
+                PersistToFile();
             }
         }
 
@@ -60,17 +105,18 @@ namespace QuantityMeasurementApp
         public void DeleteAll()
         {
             entities.Clear();
+            PersistToFile();
         }
 
         public string GetPoolStatistics()
         {
-            // No connection pool in the in-memory repository.
-            return $"In-memory cache repository. Stored items: {entities.Count}. No connection pool.";
+            // No DB pool here, but we still return some diagnostic info
+            return $"In-memory + JSON repository. Stored items: {entities.Count}. No DB connections.";
         }
 
         public void ReleaseResources()
         {
-            // Nothing to release for in-memory repository.
+            // Nothing special to release for cache + JSON
         }
     }
 }
