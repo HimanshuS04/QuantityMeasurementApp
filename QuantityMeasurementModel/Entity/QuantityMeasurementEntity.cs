@@ -7,45 +7,54 @@ namespace QuantityMeasurementApp
     /// </summary>
     public class QuantityMeasurementEntity
     {
-        public Guid Id { get; }
-        public DateTime Timestamp { get; }
+        // NOTE: Properties must have public setters so System.Text.Json can deserialize them.
+        public Guid Id { get; set; }
+        public DateTime Timestamp { get; set; }
 
-        public string OperationType { get; }
-        public string Details { get; }
-        public bool HasError { get; }
-        public string? ErrorMessage { get; }
+        public string OperationType { get; set; } = string.Empty;
+        public string Details { get; set; } = string.Empty;
+        public bool HasError { get; set; }
+        public string? ErrorMessage { get; set; }
 
         /// <summary>
         /// Optional measurement category (Length, Weight, Volume, Temperature) for this operation.
         /// </summary>
-        public MeasurementCategory? Category { get; }
+        public MeasurementCategory? Category { get; set; }
 
-        // Existing constructors kept for backward compatibility
-
-        public QuantityMeasurementEntity(string operationType, string details)
-            : this(operationType, details, category: null)
+        /// <summary>
+        /// Parameterless constructor required for JSON deserialization.
+        /// </summary>
+        public QuantityMeasurementEntity()
         {
         }
 
-        public QuantityMeasurementEntity(string operationType, string details, string errorMessage)
-            : this(operationType, details, errorMessage, category: null)
+        // Convenience constructors used when logging from the service
+
+        public QuantityMeasurementEntity(string operationType, string details, MeasurementCategory? category = null)
         {
+            Id = Guid.NewGuid();
+            Timestamp = DateTime.UtcNow;
+            OperationType = operationType;
+            Details = details;
+            HasError = false;
+            ErrorMessage = null;
+            Category = category;
         }
 
-        // New overloads that accept an optional category
-
-        public QuantityMeasurementEntity(string operationType, string details, MeasurementCategory? category)
-            : this(Guid.NewGuid(), DateTime.UtcNow, operationType, details, hasError: false, errorMessage: null, category)
+        public QuantityMeasurementEntity(string operationType, string details, string errorMessage, MeasurementCategory? category = null)
         {
+            Id = Guid.NewGuid();
+            Timestamp = DateTime.UtcNow;
+            OperationType = operationType;
+            Details = details;
+            HasError = true;
+            ErrorMessage = errorMessage;
+            Category = category;
         }
 
-        public QuantityMeasurementEntity(string operationType, string details, string errorMessage, MeasurementCategory? category)
-            : this(Guid.NewGuid(), DateTime.UtcNow, operationType, details, hasError: true, errorMessage: errorMessage, category)
-        {
-        }
-
-        // Constructor used to materialize from the database
-
+        /// <summary>
+        /// Constructor used by the database repository when materializing from SQL.
+        /// </summary>
         public QuantityMeasurementEntity(
             Guid id,
             DateTime timestamp,
