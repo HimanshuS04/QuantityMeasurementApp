@@ -7,19 +7,9 @@ namespace QuantityMeasurementApp
     {
         public static void Main(string[] args)
         {
-            // UC16: repository selection moved to AppConfiguration
-            IQuantityMeasurementRepository repository = AppConfiguration.CreateRepositoryFromConfig();
-            
-            // Domain service (UC14)
-            IQuantityMeasurementService domainService = new QuantityMeasurementService(repository);
+            IQuantityMenu menu= AppConfiguration.CreateMenuFromConfig();
+            menu.ShowMainMenu();
 
-            // Controller
-            QuantityMenu quantityMenu = new QuantityMenu(domainService);
-
-            quantityMenu.ShowMainMenu();
-
-            // Clean up resources if needed (DB connections, etc.)
-            repository.ReleaseResources();
         }
     }
 }

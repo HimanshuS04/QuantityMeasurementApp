@@ -2,7 +2,7 @@ using System;
 
 namespace QuantityMeasurementApp
 {
-    public class QuantityMenu
+    public class QuantityMenu: IQuantityMenu
     {
         private readonly IQuantityMeasurementService quantityMeasurementService;
 
@@ -12,7 +12,6 @@ namespace QuantityMeasurementApp
                 quantityMeasurementService ??
                 throw new ArgumentNullException(nameof(quantityMeasurementService));
         }
-
         // MAIN MENU
 
         public void ShowMainMenu()
