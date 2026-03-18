@@ -26,18 +26,18 @@ namespace QuantityMeasurementApp
                 connection = connectionPool.Rent();
                 using SqlCommand command = connection.CreateCommand();
                 command.CommandText = @"
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QuantityMeasurements]') AND type in (N'U'))
-BEGIN
-    CREATE TABLE [dbo].[QuantityMeasurements] (
-        [Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
-        [TimestampUtc] DATETIME2 NOT NULL,
-        [OperationType] NVARCHAR(100) NOT NULL,
-        [Details] NVARCHAR(MAX) NOT NULL,
-        [HasError] BIT NOT NULL,
-        [ErrorMessage] NVARCHAR(MAX) NULL,
-        [Category] INT NULL
-    );
-END";
+                IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QuantityMeasurements]') AND type in (N'U'))
+                BEGIN
+                    CREATE TABLE [dbo].[QuantityMeasurements] (
+                        [Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+                        [TimestampUtc] DATETIME2 NOT NULL,
+                        [OperationType] NVARCHAR(100) NOT NULL,
+                        [Details] NVARCHAR(MAX) NOT NULL,
+                        [HasError] BIT NOT NULL,
+                        [ErrorMessage] NVARCHAR(MAX) NULL,
+                        [Category] INT NULL
+                    );
+                END";
                 command.CommandType = CommandType.Text;
                 command.ExecuteNonQuery();
             }
@@ -68,10 +68,10 @@ END";
                 connection = connectionPool.Rent();
                 using SqlCommand command = connection.CreateCommand();
                 command.CommandText = @"
-INSERT INTO [dbo].[QuantityMeasurements]
-    (Id, TimestampUtc, OperationType, Details, HasError, ErrorMessage, Category)
-VALUES
-    (@Id, @TimestampUtc, @OperationType, @Details, @HasError, @ErrorMessage, @Category);";
+                INSERT INTO [dbo].[QuantityMeasurements]
+                (Id, TimestampUtc, OperationType, Details, HasError, ErrorMessage, Category)
+                VALUES
+                (@Id, @TimestampUtc, @OperationType, @Details, @HasError, @ErrorMessage, @Category);";
 
                 command.Parameters.AddWithValue("@Id", entity.Id);
                 command.Parameters.AddWithValue("@TimestampUtc", entity.Timestamp);
@@ -117,9 +117,9 @@ VALUES
                 connection = connectionPool.Rent();
                 using SqlCommand command = connection.CreateCommand();
                 command.CommandText = @"
-SELECT Id, TimestampUtc, OperationType, Details, HasError, ErrorMessage, Category
-FROM [dbo].[QuantityMeasurements]
-ORDER BY TimestampUtc;";
+                SELECT Id, TimestampUtc, OperationType, Details, HasError, ErrorMessage, Category
+                FROM [dbo].[QuantityMeasurements]
+                ORDER BY TimestampUtc;";
                 command.CommandType = CommandType.Text;
 
                 using SqlDataReader reader = command.ExecuteReader();
@@ -161,10 +161,10 @@ ORDER BY TimestampUtc;";
                 connection = connectionPool.Rent();
                 using SqlCommand command = connection.CreateCommand();
                 command.CommandText = @"
-SELECT Id, TimestampUtc, OperationType, Details, HasError, ErrorMessage, Category
-FROM [dbo].[QuantityMeasurements]
-WHERE OperationType = @OperationType
-ORDER BY TimestampUtc;";
+                SELECT Id, TimestampUtc, OperationType, Details, HasError, ErrorMessage, Category
+                FROM [dbo].[QuantityMeasurements]
+                WHERE OperationType = @OperationType
+                ORDER BY TimestampUtc;";
                 command.Parameters.AddWithValue("@OperationType", operationType);
                 command.CommandType = CommandType.Text;
 
@@ -202,10 +202,10 @@ ORDER BY TimestampUtc;";
                 connection = connectionPool.Rent();
                 using SqlCommand command = connection.CreateCommand();
                 command.CommandText = @"
-SELECT Id, TimestampUtc, OperationType, Details, HasError, ErrorMessage, Category
-FROM [dbo].[QuantityMeasurements]
-WHERE Category = @Category
-ORDER BY TimestampUtc;";
+                SELECT Id, TimestampUtc, OperationType, Details, HasError, ErrorMessage, Category
+                FROM [dbo].[QuantityMeasurements]
+                WHERE Category = @Category
+                ORDER BY TimestampUtc;";
                 command.Parameters.AddWithValue("@Category", (int)category);
                 command.CommandType = CommandType.Text;
 
