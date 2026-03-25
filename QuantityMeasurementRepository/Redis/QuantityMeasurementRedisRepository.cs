@@ -1,151 +1,187 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
+// using System;
+// using System.Collections.Generic;
+// using System.Linq;
+// using System.Text.Json;
+// using System.Text.Json.Serialization;
+// using Microsoft.EntityFrameworkCore;
+// using StackExchange.Redis;
 
-namespace QuantityMeasurementApp
-{
-    /// <summary>
-    /// Redis-backed repository for quantity operations with SQL Server as backing store.
-    /// All operations are appended to Redis first. The repository then attempts to
-    /// persist them to the database. If the database is offline, operations remain
-    /// stored in Redis until a later attempt can save them.
-    /// </summary>
-    public class QuantityOperationRedisRepository : IQuantityOperationRepository
-    {
-        private const string AllKey = "qm:operations";
-        private const string PendingKey = "qm:operations:pending";
+// namespace QuantityMeasurementApp
+// {
+//     /// <summary>
+//     /// Redis-backed implementation of IQuantityMeasurementRepository for logs.
+//     /// All log entries are appended to Redis first. The repository then attempts
+//     /// to persist them to SQL Server via EF Core. If the database is offline,
+//     /// log entries remain stored in Redis until a later attempt can save them.
+//     /// </summary>
+//     public class QuantityMeasurementRedisRepository : IQuantityMeasurementRepository
+//     {
+//         private const string AllKey = "qm:logs";
+//         private const string PendingKey = "qm:logs:pending";
 
-        private readonly QuantityMeasurementDbContext dbContext;
-        private readonly IDatabase redis;
-        private readonly JsonSerializerOptions jsonOptions;
+//         private readonly QuantityMeasurementDbContext dbContext;
+//         private readonly IDatabase redis;
+//         private readonly JsonSerializerOptions jsonOptions;
 
-        public QuantityOperationRedisRepository(
-            QuantityMeasurementDbContext dbContext,
-            IConnectionMultiplexer connectionMultiplexer)
-        {
-            this.dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-            if (connectionMultiplexer == null) throw new ArgumentNullException(nameof(connectionMultiplexer));
+//         public QuantityMeasurementRedisRepository(
+//             QuantityMeasurementDbContext dbContext,
+//             IConnectionMultiplexer connectionMultiplexer)
+//         {
+//             this.dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+//             if (connectionMultiplexer == null) throw new ArgumentNullException(nameof(connectionMultiplexer));
 
-            redis = connectionMultiplexer.GetDatabase();
+//             redis = connectionMultiplexer.GetDatabase();
 
-            jsonOptions = new JsonSerializerOptions
-            {
-                WriteIndented = false,
-                Converters = { new JsonStringEnumConverter() }
-            };
+//             jsonOptions = new JsonSerializerOptions
+//             {
+//                 WriteIndented = false,
+//                 Converters = { new JsonStringEnumConverter() }
+//             };
 
-            InitializeCacheFromDatabaseIfEmpty();
-        }
+//             InitializeCacheFromDatabaseIfEmpty();
+//         }
 
-        private void InitializeCacheFromDatabaseIfEmpty()
-        {
-            try
-            {
-                if (!redis.KeyExists(AllKey))
-                {
-                    List<QuantityOperation> allOps =
-                        dbContext.QuantityOperations.AsNoTracking().ToList();
+//         private void InitializeCacheFromDatabaseIfEmpty()
+//         {
+//             try
+//             {
+//                 if (!redis.KeyExists(AllKey))
+//                 {
+//                     List<QuantityMeasurementEntity> allLogs =
+//                         dbContext.QuantityMeasurements.AsNoTracking().ToList();
 
-                    SaveListToRedis(AllKey, allOps);
-                }
-            }
-            catch
-            {
-                // If DB is offline, we simply keep any existing Redis data (or start empty).
-            }
-        }
+//                     SaveListToRedis(AllKey, allLogs);
+//                 }
+//             }
+//             catch
+//             {
+//                 // If DB is offline or fails, we simply keep whatever is (or is not) in Redis.
+//             }
+//         }
 
-        private List<QuantityOperation> LoadListFromRedis(string key)
-        {
-            RedisValue value = redis.StringGet(key);
-            if (value.IsNullOrEmpty)
-            {
-                return new List<QuantityOperation>();
-            }
+//         private List<QuantityMeasurementEntity> LoadListFromRedis(string key)
+//         {
+//             RedisValue value = redis.StringGet(key);
+//             if (value.IsNullOrEmpty)
+//             {
+//                 return new List<QuantityMeasurementEntity>();
+//             }
 
-            try
-            {
-                string json = (string)value!;
-                var list = JsonSerializer.Deserialize<List<QuantityOperation>>(json, jsonOptions);
-                return list ?? new List<QuantityOperation>();
-            }
-            catch
-            {
-                // If cache content is corrupted, start with an empty list for this key.
-                return new List<QuantityOperation>();
-            }
-        }
+//             try
+//             {
+//                 string json = (string)value!;
+//                 var list = JsonSerializer.Deserialize<List<QuantityMeasurementEntity>>(json, jsonOptions);
+//                 return list ?? new List<QuantityMeasurementEntity>();
+//             }
+//             catch
+//             {
+//                 // If cache content is corrupted, start with an empty list for this key.
+//                 return new List<QuantityMeasurementEntity>();
+//             }
+//         }
 
-        private void SaveListToRedis(string key, List<QuantityOperation> list)
-        {
-            try
-            {
-                string json = JsonSerializer.Serialize(list, jsonOptions);
-                redis.StringSet(key, json);
-            }
-            catch
-            {
-                // Do not throw from cache write; keep API behavior as stable as possible.
-            }
-        }
+//         private void SaveListToRedis(string key, List<QuantityMeasurementEntity> list)
+//         {
+//             try
+//             {
+//                 string json = JsonSerializer.Serialize(list, jsonOptions);
+//                 redis.StringSet(key, json);
+//             }
+//             catch
+//             {
+//                 // Do not throw from cache write; keep app behavior stable even if Redis fails.
+//             }
+//         }
 
-        public async Task SaveAsync(QuantityOperation operation)
-        {
-            if (operation == null) throw new ArgumentNullException(nameof(operation));
+//         public void Save(QuantityMeasurementEntity entity)
+//         {
+//             if (entity == null) throw new ArgumentNullException(nameof(entity));
 
-            // 1) Append to in-memory cache in Redis (ALL operations)
-            List<QuantityOperation> all = LoadListFromRedis(AllKey);
-            all.Add(operation);
-            SaveListToRedis(AllKey, all);
+//             // 1) Append to Redis cache for ALL logs
+//             List<QuantityMeasurementEntity> all = LoadListFromRedis(AllKey);
+//             all.Add(entity);
+//             SaveListToRedis(AllKey, all);
 
-            // 2) Try to persist to DB
-            try
-            {
-                dbContext.QuantityOperations.Add(operation);
-                await dbContext.SaveChangesAsync();
-            }
-            catch
-            {
-                // DB is offline or failed. Store in PENDING list to be retried later.
-                List<QuantityOperation> pending = LoadListFromRedis(PendingKey);
-                pending.Add(operation);
-                SaveListToRedis(PendingKey, pending);
-                // We intentionally do not throw; the operation is at least in Redis.
-            }
-        }
+//             // 2) Try to persist to DB
+//             try
+//             {
+//                 dbContext.QuantityMeasurements.Add(entity);
+//                 dbContext.SaveChanges();
+//             }
+//             catch
+//             {
+//                 // DB is offline or failed; store in PENDING list to be retried later.
+//                 List<QuantityMeasurementEntity> pending = LoadListFromRedis(PendingKey);
+//                 pending.Add(entity);
+//                 SaveListToRedis(PendingKey, pending);
+//                 // We intentionally do not rethrow; the log is at least in Redis.
+//             }
+//         }
 
-        public Task<IReadOnlyList<QuantityOperation>> GetAllAsync()
-        {
-            List<QuantityOperation> list = LoadListFromRedis(AllKey);
-            return Task.FromResult((IReadOnlyList<QuantityOperation>)list.AsReadOnly());
-        }
+//         public IReadOnlyList<QuantityMeasurementEntity> GetAll()
+//         {
+//             List<QuantityMeasurementEntity> list = LoadListFromRedis(AllKey);
+//             return list.AsReadOnly();
+//         }
 
-        public Task<IReadOnlyList<QuantityOperation>> GetByOperationTypeAsync(string operationType)
-        {
-            if (string.IsNullOrWhiteSpace(operationType))
-            {
-                return Task.FromResult((IReadOnlyList<QuantityOperation>)Array.Empty<QuantityOperation>());
-            }
+//         public IReadOnlyList<QuantityMeasurementEntity> GetByOperationType(string operationType)
+//         {
+//             if (string.IsNullOrWhiteSpace(operationType))
+//             {
+//                 return Array.Empty<QuantityMeasurementEntity>();
+//             }
 
-            List<QuantityOperation> list = LoadListFromRedis(AllKey)
-                .Where(o => string.Equals(o.OperationType, operationType, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+//             List<QuantityMeasurementEntity> list = LoadListFromRedis(AllKey)
+//                 .Where(e => string.Equals(e.OperationType, operationType, StringComparison.OrdinalIgnoreCase))
+//                 .ToList();
 
-            return Task.FromResult((IReadOnlyList<QuantityOperation>)list.AsReadOnly());
-        }
+//             return list.AsReadOnly();
+//         }
 
-        public Task<IReadOnlyList<QuantityOperation>> GetByCategoryAsync(MeasurementCategory category)
-        {
-            List<QuantityOperation> list = LoadListFromRedis(AllKey)
-                .Where(o => o.Category == category)
-                .ToList();
+//         public IReadOnlyList<QuantityMeasurementEntity> GetByMeasurementCategory(MeasurementCategory category)
+//         {
+//             List<QuantityMeasurementEntity> list = LoadListFromRedis(AllKey)
+//                 .Where(e => e.Category.HasValue && e.Category.Value == category)
+//                 .ToList();
 
-            return Task.FromResult((IReadOnlyList<QuantityOperation>)list.AsReadOnly());
-        }
-    }
-}
+//             return list.AsReadOnly();
+//         }
+
+//         public int GetTotalCount()
+//         {
+//             List<QuantityMeasurementEntity> list = LoadListFromRedis(AllKey);
+//             return list.Count;
+//         }
+
+//         public void DeleteAll()
+//         {
+//             // Clear Redis
+//             redis.KeyDelete(AllKey);
+//             redis.KeyDelete(PendingKey);
+
+//             // Clear DB
+//             try
+//             {
+//                 dbContext.QuantityMeasurements.RemoveRange(dbContext.QuantityMeasurements);
+//                 dbContext.SaveChanges();
+//             }
+//             catch
+//             {
+//                 // If DB is offline, we at least cleared Redis; DB will be out-of-sync until next sync.
+//             }
+//         }
+
+//         public string GetPoolStatistics()
+//         {
+//             int count = GetTotalCount();
+//             int pendingCount = LoadListFromRedis(PendingKey).Count;
+
+//             return $"Redis-backed log repository. Cached logs: {count}, pending for DB: {pendingCount}.";
+//         }
+
+//         public void ReleaseResources()
+//         {
+//             // DbContext is scoped and disposed by DI; Redis connection is singleton via DI.
+//         }
+//     }
+// }

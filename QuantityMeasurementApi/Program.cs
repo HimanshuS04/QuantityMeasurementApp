@@ -36,9 +36,11 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
 // === Repository wiring for logs ===
 // For now, always use the in-memory + JSON cache repository for logs.
 // This keeps the logging flow simple and isolates the Redis+DB work to operations.
+
 builder.Services.AddSingleton<IQuantityMeasurementRepository>(_ =>
     QuantityMeasurementCacheRepository.Instance);
-Console.WriteLine("Using in-memory cache + JSON repository for logs.");
+Console.WriteLine("Using in-memory cache + JSON repository for logs (no DB configured).");
+
 
 // === Repository wiring for operations ===
 // For operations we use Redis + EF repository when DB is configured.
@@ -73,6 +75,14 @@ app.MapControllers();
 
 app.Run();
 
+if (hasDatabase)
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<QuantityMeasurementDbContext>();
+        db.Database.Migrate();
+    }
+}
 /// <summary>
 /// Simple in-memory fallback for operations if no DB is configured.
 /// NOT Redis + DB, only for emergency / dev without DB.

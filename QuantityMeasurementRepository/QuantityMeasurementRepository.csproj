@@ -18,10 +18,12 @@
   <ItemGroup>
     <!-- EF Core base -->
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
-    <!-- EF Core relational extensions (ToTable, etc.) -->
+    <!-- EF Core relational extensions -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0" />
-    <!-- EF Core SQL Server provider (needed for UseSqlOutputClause) -->
+    <!-- EF Core SQL Server provider -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+    <!-- EF Core tools (for 'dotnet ef' CLI, migrations) -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" PrivateAssets="All" />
     <!-- Redis client -->
     <PackageReference Include="StackExchange.Redis" Version="2.6.122" />
   </ItemGroup>
