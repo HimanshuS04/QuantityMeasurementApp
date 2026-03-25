@@ -19,6 +19,11 @@
     <!-- NEW: Redis client -->
     <PackageReference Include="StackExchange.Redis" Version="2.6.122" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+     <!-- Required for dotnet-ef design-time -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

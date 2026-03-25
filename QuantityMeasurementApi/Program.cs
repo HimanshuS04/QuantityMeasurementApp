@@ -149,6 +149,14 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+if (hasDatabase)
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<QuantityMeasurementDbContext>();
+        db.Database.Migrate();
+    }
+}
 
 /// <summary>
 /// Simple in-memory fallback for operations if no DB is configured.

@@ -22,6 +22,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0" />
     <!-- EF Core SQL Server provider (needed for UseSqlOutputClause) -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+    <!-- EF Core tools (for 'dotnet ef' migrations) -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" PrivateAssets="All" />
     <!-- Redis client -->
     <PackageReference Include="StackExchange.Redis" Version="2.6.122" />
   </ItemGroup>
