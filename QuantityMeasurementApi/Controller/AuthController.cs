@@ -64,7 +64,9 @@ namespace QuantityMeasurementApi.Controllers
                 Email = request.Email,
                 PasswordHash = hash,
                 PasswordSalt = salt,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                Role = "User" // default
+
             };
 
             await userRepository.CreateAsync(user);
@@ -97,7 +99,7 @@ namespace QuantityMeasurementApi.Controllers
             return Ok(new LoginResponse { Token = token });
         }
 
-        private string GenerateJwtToken(User user)
+       private string GenerateJwtToken(User user)
         {
             var jwtSection = configuration.GetSection("Jwt");
             string key = jwtSection["Key"] ?? throw new InvalidOperationException("Jwt:Key is missing.");
@@ -113,6 +115,7 @@ namespace QuantityMeasurementApi.Controllers
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

@@ -149,5 +149,13 @@ namespace QuantityMeasurementApp
 
             return Task.FromResult((IReadOnlyList<QuantityOperation>)list.AsReadOnly());
         }
+        public Task<IReadOnlyList<QuantityOperation>> GetByUserIdAsync(int userId)
+        {
+            List<QuantityOperation> list = LoadListFromRedis(AllKey)
+                .Where(o => o.UserId.HasValue && o.UserId.Value == userId)
+                .ToList();
+
+            return Task.FromResult((IReadOnlyList<QuantityOperation>)list.AsReadOnly());
+        }
     }
 }

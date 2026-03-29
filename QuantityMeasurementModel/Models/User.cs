@@ -22,5 +22,9 @@ namespace QuantityMeasurementApp
         public string PasswordSalt { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; }
+         /// <summary>
+        /// Role of the user. Allowed values for now: "User", "Admin".
+        /// </summary>
+        public string Role { get; set; } = "User";
     }
 }

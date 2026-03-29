@@ -16,5 +16,7 @@ namespace QuantityMeasurementApp
         Task<IReadOnlyList<QuantityOperation>> GetByOperationTypeAsync(string operationType);
 
         Task<IReadOnlyList<QuantityOperation>> GetByCategoryAsync(MeasurementCategory category);
+        Task<IReadOnlyList<QuantityOperation>> GetByUserIdAsync(int userId);
+
     }
 }

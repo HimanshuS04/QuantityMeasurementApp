@@ -195,4 +195,13 @@ public class InMemoryQuantityOperationRepository : IQuantityOperationRepository
             .AsReadOnly();
         return Task.FromResult((IReadOnlyList<QuantityOperation>)list);
     }
+    public Task<IReadOnlyList<QuantityOperation>> GetByUserIdAsync(int userId)
+    {
+        var list = operations
+            .Where(o => o.UserId.HasValue&& o.UserId.Value == userId)
+            .ToList()
+            .AsReadOnly();
+        return Task.FromResult((IReadOnlyList<QuantityOperation>)list);
+    }
+
 }
