@@ -11,7 +11,6 @@ namespace QuantityMeasurementApi.Controllers
 {
     [ApiController]
     [Route("api/v1/quantities")]
-    [Authorize]
     public class QuantityApiController : ControllerBase
     {
         private readonly IQuantityMeasurementService quantityService;
@@ -114,7 +113,7 @@ namespace QuantityMeasurementApi.Controllers
 
     
         [HttpPost("compare")]
-        [Authorize(Roles="User,Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<CompareResponse>> Compare([FromBody] CompareRequest request)
         {
             if (request == null || request.First == null || request.Second == null)
@@ -155,7 +154,7 @@ namespace QuantityMeasurementApi.Controllers
         }
 
         [HttpPost("convert")]
-        [Authorize(Roles="User,Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<ConvertResponse>> Convert([FromBody] ConvertRequest request)
         {
             if (request == null || request.Quantity == null || string.IsNullOrWhiteSpace(request.TargetUnit))
@@ -195,7 +194,7 @@ namespace QuantityMeasurementApi.Controllers
         }
 
         [HttpPost("add")]
-        [Authorize(Roles="User,Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<AddResponse>> Add([FromBody] AddRequest request)
         {
             if (request == null || request.First == null || request.Second == null || string.IsNullOrWhiteSpace(request.ResultUnit))
@@ -235,7 +234,7 @@ namespace QuantityMeasurementApi.Controllers
         }
 
         [HttpPost("subtract")]
-        [Authorize(Roles="User,Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<SubtractResponse>> Subtract([FromBody] SubtractRequest request)
         {
             if (request == null || request.First == null || request.Second == null || string.IsNullOrWhiteSpace(request.ResultUnit))
@@ -275,7 +274,7 @@ namespace QuantityMeasurementApi.Controllers
         }
 
         [HttpPost("divide")]
-        [Authorize(Roles="User,Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<DivideResponse>> Divide([FromBody] DivideRequest request)
         {
             if (request == null || request.First == null || request.Second == null)
@@ -340,9 +339,6 @@ namespace QuantityMeasurementApi.Controllers
             var dto = ops.Select(MapToHistoryDto).ToList();
             return Ok(dto);
         }
-
-
-
         [HttpGet("ping")]
         public ActionResult<string> Ping()
         {

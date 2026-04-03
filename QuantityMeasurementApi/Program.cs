@@ -10,10 +10,8 @@ using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
 
-// Swagger + OpenAPI with JWT security definition
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -24,7 +22,6 @@ builder.Services.AddSwaggerGen(options =>
         Description = "Quantity Measurement REST API with JWT authentication"
     });
 
-    // Define the Bearer auth scheme (JWT)
     var securityScheme = new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -42,7 +39,6 @@ builder.Services.AddSwaggerGen(options =>
 
     options.AddSecurityDefinition("Bearer", securityScheme);
 
-    // Make sure all operations can use this security scheme
     var securityRequirement = new OpenApiSecurityRequirement
     {
         { securityScheme, Array.Empty<string>() }
@@ -51,10 +47,8 @@ builder.Services.AddSwaggerGen(options =>
     options.AddSecurityRequirement(securityRequirement);
 });
 
-// Access configuration
 var configuration = builder.Configuration;
 
-// === DbContext for operations + logs + users ===
 string? dbConnectionString = configuration.GetConnectionString("QuantityMeasurementDb");
 bool hasDatabase = !string.IsNullOrWhiteSpace(dbConnectionString);
 
@@ -68,18 +62,14 @@ else
     Console.WriteLine("Warning: QuantityMeasurementDb connection string is missing. DbContext will not be registered.");
 }
 
-// === Redis connection (for operations) ===
 string redisConnectionString = configuration.GetSection("Redis")["ConnectionString"] ?? "localhost:6379";
 builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
     ConnectionMultiplexer.Connect(redisConnectionString));
 
-// === Repository wiring for logs ===
-// For now, always use the in-memory + JSON cache repository for logs.
 builder.Services.AddSingleton<IQuantityMeasurementRepository>(_ =>
     QuantityMeasurementCacheRepository.Instance);
 Console.WriteLine("Using in-memory cache + JSON repository for logs.");
 
-// === Repository wiring for operations ===
 if (hasDatabase)
 {
     builder.Services.AddScoped<IQuantityOperationRepository, QuantityOperationRedisRepository>();
@@ -91,21 +81,17 @@ else
     Console.WriteLine("Using in-memory operations repository (no database configured).");
 }
 
-// === User repository ===
 if (hasDatabase)
 {
     builder.Services.AddScoped<IUserRepository, UserRepository>();
 }
 
-// === Business service ===
 builder.Services.AddScoped<IQuantityMeasurementService, QuantityMeasurementService>();
 
-// === JWT Authentication ===
 var jwtSection = configuration.GetSection("Jwt");
 string jwtKey = jwtSection["Key"] ?? throw new InvalidOperationException("Jwt:Key is missing.");
 string jwtIssuer = jwtSection["Issuer"] ?? "QuantityMeasurementApi";
 string jwtAudience = jwtSection["Audience"] ?? "QuantityMeasurementApiUsers";
-int jwtExpiresMinutes = int.TryParse(jwtSection["ExpiresMinutes"], out int m) ? m : 60;
 
 var keyBytes = Encoding.UTF8.GetBytes(jwtKey);
 
@@ -122,16 +108,34 @@ builder.Services
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
             ValidIssuer = jwtIssuer,
             ValidAudience = jwtAudience,
             IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
-            ClockSkew = TimeSpan.Zero
+            ClockSkew = TimeSpan.Zero,
+            RoleClaimType = System.Security.Claims.ClaimTypes.Role,
+            NameClaimType = System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub
         };
     });
 
+builder.Services.AddAuthorization();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AngularApp", policy =>
+    {
+        policy
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+            .WithOrigins(
+                "http://localhost:4200",
+                "https://localhost:4200");
+    });
+});
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -143,12 +147,12 @@ if (app.Environment.IsDevelopment())
 
 // app.UseHttpsRedirection();
 
+app.UseCors("AngularApp");
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseStaticFiles();
 app.MapControllers();
 
-app.Run();
 if (hasDatabase)
 {
     using (var scope = app.Services.CreateScope())
@@ -158,10 +162,8 @@ if (hasDatabase)
     }
 }
 
-/// <summary>
-/// Simple in-memory fallback for operations if no DB is configured.
-/// NOT Redis + DB, only for emergency / dev without DB.
-/// </summary>
+app.Run();
+
 public class InMemoryQuantityOperationRepository : IQuantityOperationRepository
 {
     private readonly System.Collections.Generic.List<QuantityOperation> operations = new();
@@ -195,13 +197,13 @@ public class InMemoryQuantityOperationRepository : IQuantityOperationRepository
             .AsReadOnly();
         return Task.FromResult((IReadOnlyList<QuantityOperation>)list);
     }
+
     public Task<IReadOnlyList<QuantityOperation>> GetByUserIdAsync(int userId)
     {
         var list = operations
-            .Where(o => o.UserId.HasValue&& o.UserId.Value == userId)
+            .Where(o => o.UserId.HasValue && o.UserId.Value == userId)
             .ToList()
             .AsReadOnly();
         return Task.FromResult((IReadOnlyList<QuantityOperation>)list);
     }
-
 }
