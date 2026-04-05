@@ -188,24 +188,39 @@ namespace QuantityMeasurementApp
             return ratio;
         }
 
+        // public override bool Equals(object? obj)
+        // {
+        //     if (ReferenceEquals(this, obj))
+        //     {
+        //         return true;
+        //     }
+
+        //     if (obj is null || obj.GetType() != typeof(Quantity<TUnit>))
+        //     {
+        //         return false;
+        //     }
+
+        //     Quantity<TUnit> other = (Quantity<TUnit>)obj;
+
+        //     double thisBase = ToBaseUnit(value, unit);
+        //     double otherBase = ToBaseUnit(other.value, other.unit);
+
+        //     return thisBase.CompareTo(otherBase) == 0;
+        // }
         public override bool Equals(object? obj)
         {
             if (ReferenceEquals(this, obj))
-            {
                 return true;
-            }
 
             if (obj is null || obj.GetType() != typeof(Quantity<TUnit>))
-            {
                 return false;
-            }
 
             Quantity<TUnit> other = (Quantity<TUnit>)obj;
 
             double thisBase = ToBaseUnit(value, unit);
             double otherBase = ToBaseUnit(other.value, other.unit);
 
-            return thisBase.CompareTo(otherBase) == 0;
+            return Math.Abs(thisBase - otherBase) < 1e-6; // ✅ FIX
         }
 
         public override int GetHashCode()

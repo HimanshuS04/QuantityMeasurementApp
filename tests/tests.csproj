@@ -16,7 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\QuantityMeasurementController\QuantityMeasurementController.csproj" />
+    <!-- <ProjectReference Include="..\QuantityMeasurementController\QuantityMeasurementController.csproj" /> -->
+    <ProjectReference Include="..\QuantityMeasurementApi\QuantityMeasurementApi.csproj" />
+
   </ItemGroup>
 
 </Project>

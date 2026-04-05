@@ -24,7 +24,6 @@ namespace QuantityMeasurementAppTests
         {
             Quantity<TemperatureUnit> celsius = new Quantity<TemperatureUnit>(0.0, TemperatureUnit.Celsius);
             Quantity<TemperatureUnit> fahrenheit = new Quantity<TemperatureUnit>(32.0, TemperatureUnit.Fahrenheit);
-
             bool areEqual = celsius.Equals(fahrenheit);
 
             Assert.IsTrue(areEqual);
@@ -54,10 +53,10 @@ namespace QuantityMeasurementAppTests
         [TestMethod]
         public void TestTemperatureConversion_FahrenheitToCelsius()
         {
-            Quantity<TemperatureUnit> fahrenheit = new Quantity<TemperatureUnit>(32.0, TemperatureUnit.Fahrenheit);
+            Quantity<TemperatureUnit> fahrenheit = new Quantity<TemperatureUnit>(33.8, TemperatureUnit.Fahrenheit);
             Quantity<TemperatureUnit> celsius = fahrenheit.ConvertTo(TemperatureUnit.Celsius);
 
-            Assert.AreEqual(0.0, celsius.Value, Epsilon);
+            Assert.AreEqual(1.0, celsius.Value, Epsilon);
             Assert.AreEqual(TemperatureUnit.Celsius, celsius.Unit);
         }
 
