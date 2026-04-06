@@ -459,3 +459,30 @@ A comprehensive measurement application demonstrating object-oriented design, ge
 - EF Core ORM for database mapping.
 - Redis as cache layer for disconnected operations.
 - Repository pattern hiding persistence details.
+
+### UC18 – JWT Authentication and Protected Quantity APIs 🔐
+**Goal:** Add authentication to the Web API so that users can register, log in, and securely access protected application features.
+
+**What you implemented:**
+- Added an `AuthController` with:
+  - `POST /api/v1/auth/register` for user registration
+  - `POST /api/v1/auth/login` for user login
+- Introduced a `User` entity and `Users` table for storing application users.
+- Added `IUserRepository` and `UserRepository` using EF Core for user data access.
+- Implemented secure password storage using PBKDF2 hashing with random salt in `PasswordHasher`.
+- Configured JWT authentication in `Program.cs`:
+  - signing key
+  - issuer
+  - audience
+  - token expiry
+  - Bearer authentication
+- Protected quantity APIs using `[Authorize]`.
+- Updated Swagger configuration to support Bearer token authentication for testing secured endpoints.
+
+**Concepts:**
+- JWT-based stateless authentication
+- secure password hashing and salting
+- role of authentication vs authorization
+- EF Core-based user persistence
+- protected Web API endpoints
+- Swagger authentication integration
