@@ -17,18 +17,23 @@ namespace QuantityMeasurementApp
 
             while (!shouldExit)
             {
-                Console.WriteLine("Quantity Measurement Application ");
+                Console.WriteLine("=== Quantity Measurement Application ===");
                 Console.WriteLine("1. Compare two feet values");
+                Console.WriteLine("2. Compare two inch values");
                 Console.WriteLine("0. Exit");
                 Console.Write("Select an option: ");
 
-                string? choice = Console.ReadLine();
+                string? userOption = Console.ReadLine();
                 Console.WriteLine();
 
-                switch (choice)
+                switch (userOption)
                 {
                     case "1":
                         ExecuteFeetEqualityComparison();
+                        break;
+
+                    case "2":
+                        ExecuteInchEqualityComparison();
                         break;
 
                     case "0":
@@ -37,7 +42,7 @@ namespace QuantityMeasurementApp
                         break;
 
                     default:
-                        Console.WriteLine("Invalid option. Please select 1 or 0.");
+                        Console.WriteLine("Invalid option. Please select 1, 2 or 0.");
                         break;
                 }
 
@@ -53,7 +58,18 @@ namespace QuantityMeasurementApp
             bool areEqual = quantityMeasurementService.AreFeetMeasurementsEqual(firstFeetValue, secondFeetValue);
 
             Console.WriteLine($"Input: {firstFeetValue} ft and {secondFeetValue} ft");
-            Console.WriteLine($"Output: ({areEqual.ToString().ToLowerInvariant()})");
+            Console.WriteLine($"Output: {areEqual.ToString().ToLowerInvariant()}");
+        }
+
+        private void ExecuteInchEqualityComparison()
+        {
+            double firstInchValue = ReadInchValue("Enter first value in inches: ");
+            double secondInchValue = ReadInchValue("Enter second value in inches: ");
+
+            bool areEqual = quantityMeasurementService.AreInchMeasurementsEqual(firstInchValue, secondInchValue);
+
+            Console.WriteLine($"Input: {firstInchValue} inch and {secondInchValue} inch");
+            Console.WriteLine($"Output: {areEqual.ToString().ToLowerInvariant()}");
         }
 
         private double ReadFeetValue(string inputPrompt)
@@ -69,6 +85,22 @@ namespace QuantityMeasurementApp
                 }
 
                 Console.WriteLine("Invalid input. Please enter a numeric value for feet.");
+            }
+        }
+
+        private double ReadInchValue(string inputPrompt)
+        {
+            while (true)
+            {
+                Console.Write(inputPrompt);
+                string? userInput = Console.ReadLine();
+
+                if (double.TryParse(userInput, out double inchValue))
+                {
+                    return inchValue;
+                }
+
+                Console.WriteLine("Invalid input. Please enter a numeric value for inches.");
             }
         }
     }

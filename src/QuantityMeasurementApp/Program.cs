@@ -1,4 +1,4 @@
-namespace QuantityMeasurementApp
+﻿namespace QuantityMeasurementApp
 {
     public static class Program
     {
