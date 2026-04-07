@@ -55,7 +55,7 @@ bool hasDatabase = !string.IsNullOrWhiteSpace(dbConnectionString);
 if (hasDatabase)
 {
     builder.Services.AddDbContext<QuantityMeasurementDbContext>(options =>
-        options.UseSqlServer(dbConnectionString));
+        options.UseNpgsql(dbConnectionString));
 }
 else
 {

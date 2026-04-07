@@ -10,8 +10,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantityMeasurementModel", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantityMeasurementRepository", "QuantityMeasurementRepository\QuantityMeasurementRepository.csproj", "{9BFD87A5-8447-E7DB-2893-2459F1D9920F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantityMeasurementController", "QuantityMeasurementController\QuantityMeasurementController.csproj", "{6DC4F483-37DA-2FE5-AA7D-69F3DC62B725}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
