@@ -1,0 +1,75 @@
+using System;
+
+namespace QuantityMeasurementApp
+{
+    public class QuantityMenu
+    {
+        private readonly IQuantityMeasurementService quantityMeasurementService;
+
+        public QuantityMenu(IQuantityMeasurementService quantityMeasurementService)
+        {
+            this.quantityMeasurementService = quantityMeasurementService ?? throw new ArgumentNullException(nameof(quantityMeasurementService));
+        }
+
+        public void ShowMainMenu()
+        {
+            bool shouldExit = false;
+
+            while (!shouldExit)
+            {
+                Console.WriteLine("Quantity Measurement Application ");
+                Console.WriteLine("1. Compare two feet values");
+                Console.WriteLine("0. Exit");
+                Console.Write("Select an option: ");
+
+                string? choice = Console.ReadLine();
+                Console.WriteLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        ExecuteFeetEqualityComparison();
+                        break;
+
+                    case "0":
+                        shouldExit = true;
+                        Console.WriteLine("Exiting application.");
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid option. Please select 1 or 0.");
+                        break;
+                }
+
+                Console.WriteLine();
+            }
+        }
+
+        private void ExecuteFeetEqualityComparison()
+        {
+            double firstFeetValue = ReadFeetValue("Enter first value in feet: ");
+            double secondFeetValue = ReadFeetValue("Enter second value in feet: ");
+
+            bool areEqual = quantityMeasurementService.AreFeetMeasurementsEqual(firstFeetValue, secondFeetValue);
+
+            Console.WriteLine($"Input: {firstFeetValue} ft and {secondFeetValue} ft");
+            Console.WriteLine($"Output: ({areEqual.ToString().ToLowerInvariant()})");
+        }
+
+        private double ReadFeetValue(string inputPrompt)
+        {
+            while (true)
+            {
+                Console.Write(inputPrompt);
+                string? userInput = Console.ReadLine();
+
+                if (double.TryParse(userInput, out double feetValue))
+                {
+                    return feetValue;
+                }
+
+                Console.WriteLine("Invalid input. Please enter a numeric value for feet.");
+            }
+        }
+    }
+}

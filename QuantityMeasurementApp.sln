@@ -1,48 +1,56 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.5.2.0
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantityMeasurementBusinessLayer", "QuantityMeasurementBusinessLayer\QuantityMeasurementBusinessLayer.csproj", "{A4E53BC3-261D-727F-2F20-7844562F6B57}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests", "tests\tests.csproj", "{9CF47860-2CEA-F379-09D8-9AEF27965D12}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantityMeasurementApp", "src\QuantityMeasurementApp\QuantityMeasurementApp.csproj", "{D8D47CF8-183D-476D-863E-44F6FD787A2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantityMeasurementModel", "QuantityMeasurementModel\QuantityMeasurementModel.csproj", "{E4044820-9ADB-1C39-1150-CF93AFF048BA}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantityMeasurementRepository", "QuantityMeasurementRepository\QuantityMeasurementRepository.csproj", "{9BFD87A5-8447-E7DB-2893-2459F1D9920F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantityMeasurementController", "QuantityMeasurementController\QuantityMeasurementController.csproj", "{6DC4F483-37DA-2FE5-AA7D-69F3DC62B725}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantityMeasurementAppTests", "tests\QuantityMeasurementAppTests\QuantityMeasurementAppTests.csproj", "{9EF63769-7557-4B4F-8A9B-C1F65A1CA53A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A4E53BC3-261D-727F-2F20-7844562F6B57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A4E53BC3-261D-727F-2F20-7844562F6B57}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A4E53BC3-261D-727F-2F20-7844562F6B57}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A4E53BC3-261D-727F-2F20-7844562F6B57}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9CF47860-2CEA-F379-09D8-9AEF27965D12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9CF47860-2CEA-F379-09D8-9AEF27965D12}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9CF47860-2CEA-F379-09D8-9AEF27965D12}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9CF47860-2CEA-F379-09D8-9AEF27965D12}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E4044820-9ADB-1C39-1150-CF93AFF048BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E4044820-9ADB-1C39-1150-CF93AFF048BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E4044820-9ADB-1C39-1150-CF93AFF048BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E4044820-9ADB-1C39-1150-CF93AFF048BA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9BFD87A5-8447-E7DB-2893-2459F1D9920F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9BFD87A5-8447-E7DB-2893-2459F1D9920F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9BFD87A5-8447-E7DB-2893-2459F1D9920F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9BFD87A5-8447-E7DB-2893-2459F1D9920F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6DC4F483-37DA-2FE5-AA7D-69F3DC62B725}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6DC4F483-37DA-2FE5-AA7D-69F3DC62B725}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6DC4F483-37DA-2FE5-AA7D-69F3DC62B725}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6DC4F483-37DA-2FE5-AA7D-69F3DC62B725}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8D47CF8-183D-476D-863E-44F6FD787A2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8D47CF8-183D-476D-863E-44F6FD787A2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8D47CF8-183D-476D-863E-44F6FD787A2E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D8D47CF8-183D-476D-863E-44F6FD787A2E}.Debug|x64.Build.0 = Debug|Any CPU
+		{D8D47CF8-183D-476D-863E-44F6FD787A2E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D8D47CF8-183D-476D-863E-44F6FD787A2E}.Debug|x86.Build.0 = Debug|Any CPU
+		{D8D47CF8-183D-476D-863E-44F6FD787A2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8D47CF8-183D-476D-863E-44F6FD787A2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8D47CF8-183D-476D-863E-44F6FD787A2E}.Release|x64.ActiveCfg = Release|Any CPU
+		{D8D47CF8-183D-476D-863E-44F6FD787A2E}.Release|x64.Build.0 = Release|Any CPU
+		{D8D47CF8-183D-476D-863E-44F6FD787A2E}.Release|x86.ActiveCfg = Release|Any CPU
+		{D8D47CF8-183D-476D-863E-44F6FD787A2E}.Release|x86.Build.0 = Release|Any CPU
+		{9EF63769-7557-4B4F-8A9B-C1F65A1CA53A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EF63769-7557-4B4F-8A9B-C1F65A1CA53A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EF63769-7557-4B4F-8A9B-C1F65A1CA53A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9EF63769-7557-4B4F-8A9B-C1F65A1CA53A}.Debug|x64.Build.0 = Debug|Any CPU
+		{9EF63769-7557-4B4F-8A9B-C1F65A1CA53A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9EF63769-7557-4B4F-8A9B-C1F65A1CA53A}.Debug|x86.Build.0 = Debug|Any CPU
+		{9EF63769-7557-4B4F-8A9B-C1F65A1CA53A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EF63769-7557-4B4F-8A9B-C1F65A1CA53A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EF63769-7557-4B4F-8A9B-C1F65A1CA53A}.Release|x64.ActiveCfg = Release|Any CPU
+		{9EF63769-7557-4B4F-8A9B-C1F65A1CA53A}.Release|x64.Build.0 = Release|Any CPU
+		{9EF63769-7557-4B4F-8A9B-C1F65A1CA53A}.Release|x86.ActiveCfg = Release|Any CPU
+		{9EF63769-7557-4B4F-8A9B-C1F65A1CA53A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {591C653E-9C16-49DA-9321-1DFCA37743FA}
+	GlobalSection(NestedProjects) = preSolution
+		{D8D47CF8-183D-476D-863E-44F6FD787A2E} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{9EF63769-7557-4B4F-8A9B-C1F65A1CA53A} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal
