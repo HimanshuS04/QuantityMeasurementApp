@@ -17,5 +17,13 @@ namespace QuantityMeasurementApp
 
             return firstInch.Equals(secondInch);
         }
+
+        public bool AreQuantitiesEqual(double firstValue, LengthUnit firstUnit, double secondValue, LengthUnit secondUnit)
+        {
+            QuantityLength firstQuantity = new QuantityLength(firstValue, firstUnit);
+            QuantityLength secondQuantity = new QuantityLength(secondValue, secondUnit);
+
+            return firstQuantity.Equals(secondQuantity);
+        }
     }
 }

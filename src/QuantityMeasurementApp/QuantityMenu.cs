@@ -20,6 +20,7 @@ namespace QuantityMeasurementApp
                 Console.WriteLine("=== Quantity Measurement Application ===");
                 Console.WriteLine("1. Compare two feet values");
                 Console.WriteLine("2. Compare two inch values");
+                Console.WriteLine("3. Compare two length quantities ");
                 Console.WriteLine("0. Exit");
                 Console.Write("Select an option: ");
 
@@ -36,13 +37,17 @@ namespace QuantityMeasurementApp
                         ExecuteInchEqualityComparison();
                         break;
 
+                    case "3":
+                        ExecuteGenericQuantityEqualityComparison();
+                        break;
+
                     case "0":
                         shouldExit = true;
                         Console.WriteLine("Exiting application.");
                         break;
 
                     default:
-                        Console.WriteLine("Invalid option. Please select 1, 2 or 0.");
+                        Console.WriteLine("Invalid option. Please select 1, 2, 3 or 0.");
                         break;
                 }
 
@@ -58,7 +63,7 @@ namespace QuantityMeasurementApp
             bool areEqual = quantityMeasurementService.AreFeetMeasurementsEqual(firstFeetValue, secondFeetValue);
 
             Console.WriteLine($"Input: {firstFeetValue} ft and {secondFeetValue} ft");
-            Console.WriteLine($"Output: {areEqual.ToString().ToLowerInvariant()}");
+            Console.WriteLine($"Output: Equal ({areEqual.ToString().ToLowerInvariant()})");
         }
 
         private void ExecuteInchEqualityComparison()
@@ -69,7 +74,21 @@ namespace QuantityMeasurementApp
             bool areEqual = quantityMeasurementService.AreInchMeasurementsEqual(firstInchValue, secondInchValue);
 
             Console.WriteLine($"Input: {firstInchValue} inch and {secondInchValue} inch");
-            Console.WriteLine($"Output: {areEqual.ToString().ToLowerInvariant()}");
+            Console.WriteLine($"Output: Equal ({areEqual.ToString().ToLowerInvariant()})");
+        }
+
+        private void ExecuteGenericQuantityEqualityComparison()
+        {
+            double firstValue = ReadNumericValue("Enter first value: ");
+            LengthUnit firstUnit = ReadLengthUnit("Enter first unit (feet/inch): ");
+
+            double secondValue = ReadNumericValue("Enter second value: ");
+            LengthUnit secondUnit = ReadLengthUnit("Enter second unit (feet/inch): ");
+
+            bool areEqual = quantityMeasurementService.AreQuantitiesEqual(firstValue, firstUnit, secondValue, secondUnit);
+
+            Console.WriteLine($"Input: {firstValue} {firstUnit.ToString().ToLowerInvariant()} and {secondValue} {secondUnit.ToString().ToLowerInvariant()}");
+            Console.WriteLine($"Output: Equal ({areEqual.ToString().ToLowerInvariant()})");
         }
 
         private double ReadFeetValue(string inputPrompt)
@@ -101,6 +120,47 @@ namespace QuantityMeasurementApp
                 }
 
                 Console.WriteLine("Invalid input. Please enter a numeric value for inches.");
+            }
+        }
+
+        private double ReadNumericValue(string inputPrompt)
+        {
+            while (true)
+            {
+                Console.Write(inputPrompt);
+                string? userInput = Console.ReadLine();
+
+                if (double.TryParse(userInput, out double numericValue))
+                {
+                    return numericValue;
+                }
+
+                Console.WriteLine("Invalid input. Please enter a numeric value.");
+            }
+        }
+
+        private LengthUnit ReadLengthUnit(string inputPrompt)
+        {
+            while (true)
+            {
+                Console.Write(inputPrompt);
+                string? userInput = Console.ReadLine();
+
+                if (string.Equals(userInput, "feet", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(userInput, "foot", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(userInput, "ft", StringComparison.OrdinalIgnoreCase))
+                {
+                    return LengthUnit.Feet;
+                }
+
+                if (string.Equals(userInput, "inch", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(userInput, "inches", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(userInput, "in", StringComparison.OrdinalIgnoreCase))
+                {
+                    return LengthUnit.Inch;
+                }
+
+                Console.WriteLine("Invalid unit. Please enter 'feet' or 'inch'.");
             }
         }
     }

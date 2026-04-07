@@ -1,14 +1,14 @@
 namespace QuantityMeasurementApp
 {
-    public class Inches
+    public class Feet
     {
         private readonly QuantityLength quantityLength;
 
         public double Value => quantityLength.Value;
 
-        public Inches(double value)
+        public Feet(double value)
         {
-            quantityLength = new QuantityLength(value, LengthUnit.Inch);
+            quantityLength = new QuantityLength(value, LengthUnit.Feet);
         }
 
         public override bool Equals(object? obj)
@@ -28,9 +28,9 @@ namespace QuantityMeasurementApp
                 return false;
             }
 
-            Inches otherInches = (Inches)obj;
+            Feet otherFeet = (Feet)obj;
 
-            return quantityLength.Equals(otherInches.quantityLength);
+            return quantityLength.Equals(otherFeet.quantityLength);
         }
 
         public override int GetHashCode()
