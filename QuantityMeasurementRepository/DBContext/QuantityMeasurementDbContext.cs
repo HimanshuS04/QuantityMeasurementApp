@@ -30,7 +30,7 @@ namespace QuantityMeasurementApp
 
             // Operations
             var op = modelBuilder.Entity<QuantityOperation>();
-            op.ToTable("QuantityOperations", tb => tb.UseSqlOutputClause(false));
+            op.ToTable("QuantityOperations");
             op.HasKey(e => e.Id);
             op.Property(e => e.Id).ValueGeneratedOnAdd();
             op.Property(e => e.Category).IsRequired();

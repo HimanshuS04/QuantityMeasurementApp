@@ -55,7 +55,7 @@ bool hasDatabase = !string.IsNullOrWhiteSpace(dbConnectionString);
 if (hasDatabase)
 {
     builder.Services.AddDbContext<QuantityMeasurementDbContext>(options =>
-        options.UseSqlServer(dbConnectionString));
+        options.UseNpgsql(dbConnectionString));
 }
 else
 {
@@ -155,10 +155,15 @@ app.MapControllers();
 
 if (hasDatabase)
 {
-    using (var scope = app.Services.CreateScope())
+    try
     {
+        using var scope = app.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<QuantityMeasurementDbContext>();
         db.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Database migration failed: " + ex.Message);
     }
 }
 
