@@ -153,6 +153,7 @@ app.UseCors("AngularApp");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
+app.MapGet("/", () => "Quantity Measurement API is running 🚀");
 app.MapControllers();
 
 if (hasDatabase)
