@@ -146,28 +146,19 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// app.UseCors(policy =>
-// {
-//     policy
-//         .AllowAnyOrigin()
-//         .AllowAnyHeader()
-//         .AllowAnyMethod();
-// });
+app.UseCors(policy =>
+{
+    policy
+        // .AllowAnyOrigin()
+        .WithOrigins(
+               "http://localhost:4200",
+                "https://localhost:4200",
+               "https://cosmic-pixie-bef91b.netlify.app")
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+});
 // app.UseHttpsRedirection();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy
-            .WithOrigins(
-                "http://localhost:4200",
-                "https://localhost:4200",
-                "https://cosmic-pixie-bef91b.netlify.app")
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
-});
 app.UseCors("AngularApp");
 app.UseAuthentication();
 app.UseAuthorization();
