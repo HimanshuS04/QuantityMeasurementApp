@@ -11,6 +11,7 @@ using StackExchange.Redis;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddCors();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -120,19 +121,19 @@ builder.Services
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy
-            .WithOrigins(
-                "http://localhost:4200",
-                "https://localhost:4200",
-                "https://cosmic-pixie-bef91b.netlify.app")
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
-});
+// builder.Services.AddCors(options =>
+// {
+//     options.AddPolicy("AllowFrontend", policy =>
+//     {
+//         policy
+//             .WithOrigins(
+//                 "http://localhost:4200",
+//                 "https://localhost:4200",
+//                 "https://cosmic-pixie-bef91b.netlify.app")
+//             .AllowAnyHeader()
+//             .AllowAnyMethod();
+//     });
+// });
 
 var app = builder.Build();
 
@@ -145,6 +146,13 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseCors(policy =>
+{
+    policy
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+});
 // app.UseHttpsRedirection();
 
 app.UseCors("AngularApp");
