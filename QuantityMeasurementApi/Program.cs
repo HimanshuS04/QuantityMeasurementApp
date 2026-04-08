@@ -122,17 +122,15 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AngularApp", policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials()
             .WithOrigins(
                 "http://localhost:4200",
                 "https://localhost:4200",
-                "https://cosmic-pixie-bef91b.netlify.app/");
-
+                "https://cosmic-pixie-bef91b.netlify.app")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
 
