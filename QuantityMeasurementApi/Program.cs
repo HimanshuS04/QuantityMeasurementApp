@@ -132,6 +132,7 @@ builder.Services.AddCors(options =>
                 "http://localhost:4200",
                 "https://localhost:4200",
                 "https://cosmic-pixie-bef91b.netlify.app/");
+                
     });
 });
 
