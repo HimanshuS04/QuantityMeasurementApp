@@ -11,7 +11,6 @@ using StackExchange.Redis;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddCors();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -60,7 +59,7 @@ if (hasDatabase)
 }
 else
 {
-    Console.WriteLine("Warning: QuantityMeasurementDb connection string is missing. DbContext will not be registered.");
+    Console.WriteLine("Warning: QuantityMeasurementDb connection string is missing.");
 }
 
 string redisConnectionString = configuration.GetSection("Redis")["ConnectionString"] ?? "localhost:6379";
@@ -74,7 +73,7 @@ Console.WriteLine("Using in-memory cache + JSON repository for logs.");
 if (hasDatabase)
 {
     builder.Services.AddScoped<IQuantityOperationRepository, QuantityOperationRedisRepository>();
-    Console.WriteLine("Using Redis-backed operations repository with SQL Server persistence.");
+    Console.WriteLine("Using Redis-backed operations repository with PostgreSQL persistence.");
 }
 else
 {
@@ -121,48 +120,30 @@ builder.Services
 
 builder.Services.AddAuthorization();
 
-// builder.Services.AddCors(options =>
-// {
-//     options.AddPolicy("AllowFrontend", policy =>
-//     {
-//         policy
-//             .WithOrigins(
-//                 "http://localhost:4200",
-//                 "https://localhost:4200",
-//                 "https://cosmic-pixie-bef91b.netlify.app")
-//             .AllowAnyHeader()
-//             .AllowAnyMethod();
-//     });
-// });
-
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+// Swagger enabled in all environments
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quantity Measurement API v1");
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quantity Measurement API v1");
+});
 
+// Single CORS — works for both local and production
 app.UseCors(policy =>
 {
     policy
-        // .AllowAnyOrigin()
         .WithOrigins(
-               "http://localhost:4200",
-                "https://localhost:4200",
-               "https://cosmic-pixie-bef91b.netlify.app")
+            "http://localhost:4200",
+            "https://localhost:4200",
+            "https://cosmic-pixie-bef91b.netlify.app")
         .AllowAnyHeader()
         .AllowAnyMethod();
 });
-// app.UseHttpsRedirection();
 
-app.UseCors("AngularApp");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseStaticFiles();
+
 app.MapGet("/", () => "Quantity Measurement API is running 🚀");
 app.MapControllers();
 
